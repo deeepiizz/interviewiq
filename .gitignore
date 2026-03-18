@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+backend/venv/
+backend/.env
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# VS Code / OS
+.vscode/
+.DS_Store
+
+# Local files
+backend/uploads/
+backend/app/db/faiss_index/
+backend/app/db/history.json
