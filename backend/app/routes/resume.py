@@ -3,9 +3,10 @@ import os
 
 from app.services.pdf_parser import extract_text_from_pdf
 from app.utils.text_chunker import chunk_text
+from app.services.embedder import get_embeddings
+from app.services.vector_store import save_index
 
-router = APIRouter(prefix="/resume")
-
+router = APIRouter()
 
 @router.post("/upload")
 async def upload_resume(file: UploadFile = File(...)):
@@ -17,10 +18,11 @@ async def upload_resume(file: UploadFile = File(...)):
 
     text = extract_text_from_pdf(file_path)
     chunks = chunk_text(text)
+    embeddings = get_embeddings(chunks)
+    save_index(embeddings, chunks)
 
     return {
-        "message": "Resume uploaded successfully",
+        "message": "Resume uploaded and indexed successfully",
         "filename": file.filename,
-        "text_length": len(text),
-        "chunks": len(chunks),
+        "chunks": len(chunks)
     }
