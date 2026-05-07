@@ -3,7 +3,7 @@ import os
 
 from app.services.pdf_parser import extract_text_from_pdf
 from app.utils.text_chunker import chunk_text
-from app.services.embedder import get_embeddings
+#from app.services.embedder import get_embeddings
 from app.services.vector_store import save_index
 
 router = APIRouter()
