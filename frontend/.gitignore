@@ -1,0 +1,37 @@
+# Environment variables - NEVER commit
+.env
+*.env
+backend/.env
+
+# API keys
+**/API Key.txt
+**/api_key.txt
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+*.egg-info/
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Uploads & runtime data
+backend/uploads/
+backend/data/
+backend/*.db
+backend/faiss_index/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
