@@ -29,7 +29,7 @@ function ResumeUpload({ onUploadSuccess }) {
 
     try {
       const res = await axios.post(
-        "http://127.0.0.1:8000/resume/upload",
+        `${import.meta.env.VITE_API_URL}/resume/upload`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       )

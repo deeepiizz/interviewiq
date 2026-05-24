@@ -13,7 +13,7 @@ function QuestionInput({ onAnswer, disabled }) {
 
     try {
       const res = await axios.post(
-        "http://127.0.0.1:8000/interview/ask",
+        `${import.meta.env.VITE_API_URL}/interview/ask`,
         { question },
         { headers: { "Content-Type": "application/json" } }
       )
