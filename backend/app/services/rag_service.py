@@ -91,11 +91,17 @@ def generate_answer(question: str) -> str:
 
     if vectorstore is None:
         context = "No resume has been uploaded yet."
+        print("[RAG DEBUG] No vectorstore — resume not uploaded")
     else:
         # Retrieve top-3 most relevant chunks
         retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
         relevant_docs = retriever.invoke(question)
+        print(f"[RAG DEBUG] Question: {question}")
+        print(f"[RAG DEBUG] Retrieved {len(relevant_docs)} chunks")
+        for i, doc in enumerate(relevant_docs):
+            print(f"[RAG DEBUG] Chunk {i+1}: {doc.page_content[:200]}...")
         context = "\n\n".join([doc.page_content for doc in relevant_docs])
+        print(f"[RAG DEBUG] Total context length: {len(context)} chars")
 
     # Build the prompt and run the LLM
     chain = prompt_template | llm
