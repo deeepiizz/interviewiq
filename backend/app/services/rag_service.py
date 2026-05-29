@@ -71,10 +71,11 @@ def build_index_from_pdf(pdf_path: str) -> int:
     loader = PyPDFLoader(pdf_path)
     documents = loader.load()
 
-    # 2. Split into chunks for better retrieval
+   # 2. Split into chunks for better retrieval
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500,
-        chunk_overlap=50,
+        chunk_size=1000,
+        chunk_overlap=200,
+        separators=["\n\n", "\n", ". ", " ", ""],
     )
     chunks = splitter.split_documents(documents)
 
