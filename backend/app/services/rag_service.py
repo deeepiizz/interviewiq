@@ -1,8 +1,17 @@
 import os
 import re
+import time
 from dotenv import load_dotenv
 
-from langchain_community.document_loaders import PyPDFLoader
+# MLflow tracking is local-only (dev). Wrapped so production never breaks if MLflow isn't installed.
+try:
+    from app.services.mlflow_tracker import log_rag_run
+except Exception as e:
+    print(f"[MLflow] Not available, skipping tracking: {e}")
+    def log_rag_run(*args, **kwargs):
+        pass
+
+from langchain_community.document_loaders import PyMuPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEndpointEmbeddings
 from langchain_community.vectorstores import FAISS
@@ -67,11 +76,11 @@ def sanitize_answer(text: str) -> str:
 
 def build_index_from_pdf(pdf_path: str) -> int:
     """LangChain RAG pipeline: load PDF → split → embed → store in FAISS."""
-    # 1. Load the PDF using LangChain's PDF loader
-    loader = PyPDFLoader(pdf_path)
+    # 1. Load the PDF using PyMuPDF (handles tricky PDFs better than pypdf)
+    loader = PyMuPDFLoader(pdf_path)
     documents = loader.load()
 
-   # 2. Split into chunks for better retrieval
+    # 2. Split into chunks for better retrieval
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=1000,
         chunk_overlap=200,
@@ -87,26 +96,42 @@ def build_index_from_pdf(pdf_path: str) -> int:
 
 
 def generate_answer(question: str) -> str:
-    """Retrieve relevant chunks via FAISS, then prompt the LLM."""
+    """Retrieve relevant chunks via FAISS, then prompt the LLM. Logs to MLflow."""
+    start_time = time.time()
     vectorstore = state.get("vectorstore")
+    retrieved_chunks_text = []
 
     if vectorstore is None:
         context = "No resume has been uploaded yet."
         print("[RAG DEBUG] No vectorstore — resume not uploaded")
     else:
-        # Retrieve top-3 most relevant chunks
         retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
         relevant_docs = retriever.invoke(question)
         print(f"[RAG DEBUG] Question: {question}")
         print(f"[RAG DEBUG] Retrieved {len(relevant_docs)} chunks")
         for i, doc in enumerate(relevant_docs):
             print(f"[RAG DEBUG] Chunk {i+1}: {doc.page_content[:200]}...")
-        context = "\n\n".join([doc.page_content for doc in relevant_docs])
+            retrieved_chunks_text.append(doc.page_content)
+        context = "\n\n".join(retrieved_chunks_text)
         print(f"[RAG DEBUG] Total context length: {len(context)} chars")
 
     # Build the prompt and run the LLM
     chain = prompt_template | llm
     response = chain.invoke({"context": context, "question": question})
-
     raw_answer = response.content
-    return sanitize_answer(raw_answer)
+    final_answer = sanitize_answer(raw_answer)
+
+    # Log to MLflow (no-op if MLflow unavailable)
+    elapsed = time.time() - start_time
+    log_rag_run(
+        question=question,
+        retrieved_chunks=retrieved_chunks_text,
+        context_length=len(context),
+        answer=final_answer,
+        model_name="llama-3.3-70b-versatile",
+        temperature=0.2,
+        max_tokens=500,
+        response_time_seconds=elapsed,
+    )
+
+    return final_answer

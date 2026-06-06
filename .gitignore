@@ -1,16 +1,22 @@
-﻿# Environment variables - NEVER commit
+# ============================
+# Environment variables - NEVER commit
+# ============================
 .env
 *.env
 backend/.env
 **/.env
 
+# ============================
 # API keys / secrets
+# ============================
 **/API Key.txt
 **/api_key.txt
 sk-proj-*
 gsk_*
 
+# ============================
 # Python
+# ============================
 __pycache__/
 **/__pycache__/
 *.pyc
@@ -19,37 +25,33 @@ venv/
 backend/venv/
 .venv/
 
+# ============================
 # Node
+# ============================
 node_modules/
 **/node_modules/
 dist/
-dist-ssr/
 .vite/
-*.local
 
+# ============================
 # Runtime data
+# ============================
 backend/uploads/
 backend/data/
 backend/*.db
 backend/faiss_index/
 
+# ============================
 # IDE / OS
-.vscode/*
-!.vscode/extensions.json
+# ============================
+.vscode/
 .idea/
 .DS_Store
 Thumbs.db
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
 
 # Logs
-logs/
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+mlflow.db
+*.db
+backend/mlruns/
+mlruns/

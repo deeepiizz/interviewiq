@@ -35,3 +35,9 @@ Thumbs.db
 
 # Logs
 *.log
+
+# MLflow local data
+backend/mlruns/
+mlruns/
+mlflow.db
+*.db
