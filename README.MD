@@ -7,6 +7,10 @@
 
 ---
 
+![InterviewIQ multi-agent demo with critic scoring](screenshot.png)
+
+---
+
 ## What it does
 
 Upload your resume, ask an interview question, and get a polished, resume-grounded answer back. Two modes:
@@ -19,28 +23,31 @@ The Critic returns a 1–10 score plus actionable feedback, so the user knows wh
 ---
 
 ## Architecture
+
+```
 ┌─────────────────────┐         ┌──────────────────────────────┐
 │   React + Tailwind  │  HTTPS  │   FastAPI (Render, EU)       │
 │   (Vercel)          │ ──────► │                              │
 │                     │         │   ┌────────────────────────┐ │
-│   - Upload resume   │         │   │  RAG Pipeline           │ │
-│   - Mode toggle     │         │   │  PyMuPDF → chunks →     │ │
-│   - Score + critic  │         │   │  HuggingFace embeddings │ │
-│     feedback UI     │         │   │  → FAISS vector store   │ │
+│   - Upload resume   │         │   │  RAG Pipeline          │ │
+│   - Mode toggle     │         │   │  PyMuPDF → chunks →    │ │
+│   - Score + critic  │         │   │  HuggingFace embeddings│ │
+│     feedback UI     │         │   │  → FAISS vector store  │ │
 └─────────────────────┘         │   └────────────────────────┘ │
-│              │                │
-│   ┌──────────▼─────────────┐  │
-│   │  Multi-Agent Pipeline  │  │
-│   │  Researcher → Writer   │  │
-│   │     → Critic           │  │
-│   │  (LangChain + Groq)    │  │
-│   └────────────────────────┘  │
-│              │                │
-│   ┌──────────▼─────────────┐  │
-│   │  MLflow (local dev)    │  │
-│   │  experiment tracking   │  │
-│   └────────────────────────┘  │
-└──────────────────────────────┘
+                                │              │                │
+                                │   ┌──────────▼─────────────┐  │
+                                │   │  Multi-Agent Pipeline  │  │
+                                │   │  Researcher → Writer   │  │
+                                │   │     → Critic           │  │
+                                │   │  (LangChain + Groq)    │  │
+                                │   └────────────────────────┘  │
+                                │              │                │
+                                │   ┌──────────▼─────────────┐  │
+                                │   │  MLflow (local dev)    │  │
+                                │   │  experiment tracking   │  │
+                                │   └────────────────────────┘  │
+                                └──────────────────────────────┘
+```
 
 ---
 
@@ -58,6 +65,29 @@ The Critic returns a 1–10 score plus actionable feedback, so the user knows wh
 | **Experiment tracking** | MLflow (local) |
 | **Frontend** | React + Vite + Tailwind CSS |
 | **Deployment** | Render (backend, Frankfurt region) + Vercel (frontend) |
+
+---
+
+## Evaluation Results
+
+An automated eval suite (`backend/evals/run_eval.py`) runs 8 representative interview questions through both pipelines and logs everything to MLflow.
+
+| Metric | Value |
+|--------|-------|
+| Questions evaluated | 8 |
+| Average critic score | **8.88 / 10** |
+| Baseline (single-LLM) avg response | 3.24 s |
+| Multi-agent avg response | 7.44 s |
+| Multi-agent overhead | +130% (in exchange for scoring + feedback) |
+
+The multi-agent pipeline is roughly twice as slow because it makes three LLM calls instead of one, but it returns a critic score and concrete improvement suggestion alongside the answer.
+
+Run it yourself:
+```bash
+cd backend
+python -m evals.run_eval
+mlflow ui --backend-store-uri ./mlruns
+```
 
 ---
 
@@ -116,10 +146,10 @@ uvicorn app.main:app --reload
 ```
 
 Create a `.env` file in `backend/`:
-
-
+```
 GROQ_API_KEY=your_groq_key_here
 HUGGINGFACEHUB_API_TOKEN=your_hf_token_here
+```
 
 ### Frontend
 
@@ -130,11 +160,15 @@ npm run dev
 ```
 
 Create a `.env` file in `frontend/`:
+```
 VITE_API_URL=http://127.0.0.1:8000
+```
 
 ---
 
 ## Project Structure
+
+```
 interviewiq/
 ├── backend/
 │   ├── app/
@@ -147,6 +181,9 @@ interviewiq/
 │   │       ├── rag_service.py
 │   │       ├── crew_service.py
 │   │       └── mlflow_tracker.py
+│   ├── evals/
+│   │   ├── run_eval.py
+│   │   └── results.json
 │   └── requirements.txt
 ├── frontend/
 │   └── src/
@@ -155,7 +192,9 @@ interviewiq/
 │           ├── ResumeUpload.jsx
 │           ├── QuestionInput.jsx
 │           └── AnswerCard.jsx
+├── screenshot.png
 └── README.md
+```
 
 ---
 
@@ -165,6 +204,7 @@ interviewiq/
 - **RAG chunking matters more than the LLM choice.** Switching from `chunk_size=500` defaults to `chunk_size=1000, overlap=200` improved answer specificity noticeably.
 - **Anti-hallucination needs both prompt rules AND post-processing.** Prompts alone don't fully prevent the LLM from inventing numbers — a regex sanitizer is a safety net.
 - **Production constraints shape architecture.** Render's free tier RAM limits meant MLflow had to stay local-only, which led to lazy imports and a clean fallback pattern.
+- **Eval suites build credibility.** Measured outputs (avg critic score 8.88/10 over 8 questions) say more about quality than any product description.
 
 ---
 
@@ -172,4 +212,3 @@ interviewiq/
 
 **Deepika Murthy** — MSc Machine Learning & Data Analytics @ Hochschule Aalen
 [github.com/deeepiizz](https://github.com/deeepiizz) · [LinkedIn](https://linkedin.com/in/deepika-murthy-71686921b)
-
