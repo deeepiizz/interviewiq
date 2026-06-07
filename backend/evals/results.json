@@ -1,0 +1,64 @@
+{
+  "n_questions": 8,
+  "avg_critic_score": 8.875,
+  "avg_baseline_time_s": 3.23875,
+  "avg_agent_time_s": 7.4375,
+  "per_question": [
+    {
+      "question": "Tell me about yourself",
+      "baseline_time": 0.85,
+      "agent_time": 5.3,
+      "critic_score": 9.0,
+      "feedback": "To further improve, consider adding a brief personal anecdote or career motivation to make the introduction more engaging and help the interviewer understand what drives you beyond your technical skills."
+    },
+    {
+      "question": "What are your greatest strengths?",
+      "baseline_time": 0.99,
+      "agent_time": 2.79,
+      "critic_score": 9.0,
+      "feedback": "To further strengthen the answer, the candidate could explicitly state their greatest strengths at the beginning of the response, rather than implying them through the example, to provide a clearer and more direct response to the question."
+    },
+    {
+      "question": "Describe a challenging project you worked on",
+      "baseline_time": 0.75,
+      "agent_time": 2.3,
+      "critic_score": 9.0,
+      "feedback": "To further strengthen the answer, the candidate could provide specific metrics or results, such as the actual accuracy achieved on the MNIST dataset, to quantify the project's success and demonstrate a more concrete impact."
+    },
+    {
+      "question": "Why are you interested in machine learning?",
+      "baseline_time": 0.72,
+      "agent_time": 2.19,
+      "critic_score": 9.0,
+      "feedback": "To further strengthen the answer, the candidate could provide a specific example or metric from their previous project that demonstrates the real-world impact of their machine learning model, such as \"our CNN model achieved a 95% accuracy rate in medical image analysis, leading to improved patient outcomes\"."
+    },
+    {
+      "question": "How do you approach debugging a complex problem?",
+      "baseline_time": 3.87,
+      "agent_time": 13.04,
+      "critic_score": 9.0,
+      "feedback": "To further strengthen the answer, the candidate could provide more specific details about the technical skills they applied, such as the machine learning algorithms or data analytics tools used, to give a clearer understanding of their debugging approach."
+    },
+    {
+      "question": "Tell me about a time you had to learn something new quickly",
+      "baseline_time": 6.2,
+      "agent_time": 11.82,
+      "critic_score": 8.0,
+      "feedback": "To further strengthen the answer, the candidate could provide more specific details about the challenges they faced and the exact steps they took to learn PyTorch and achieve high accuracy in their project."
+    },
+    {
+      "question": "What's your experience with deep learning frameworks?",
+      "baseline_time": 6.83,
+      "agent_time": 11.36,
+      "critic_score": 9.0,
+      "feedback": "To further strengthen the answer, the candidate could provide specific metrics or results from their projects, such as the exact accuracy improvement or model performance metrics, to demonstrate the tangible impact of their experience with deep learning frameworks."
+    },
+    {
+      "question": "Describe your most impactful piece of work",
+      "baseline_time": 5.7,
+      "agent_time": 10.7,
+      "critic_score": 9.0,
+      "feedback": "To further strengthen the answer, consider providing specific metrics or quantifiable results that demonstrate the impact of the InterviewIQ project, such as \"resulting in a 25% increase in efficiency\" or \"improving accuracy by 30%\"."
+    }
+  ]
+}
