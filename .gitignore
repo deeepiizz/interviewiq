@@ -24,7 +24,7 @@ __pycache__/
 venv/
 backend/venv/
 .venv/
-
+backend/venv311/
 # ============================
 # Node
 # ============================
