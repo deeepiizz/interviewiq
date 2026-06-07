@@ -4,7 +4,13 @@ import QuestionInput from "./components/QuestionInput"
 import AnswerCard from "./components/AnswerCard"
 
 function App() {
-  const [answerState, setAnswerState] = useState({ answer: "", loading: false })
+  const [answerState, setAnswerState] = useState({
+    answer: "",
+    loading: false,
+    score: null,
+    feedback: null,
+    mode: "quick",
+  })
   const [resumeUploaded, setResumeUploaded] = useState(false)
 
   return (
@@ -30,12 +36,15 @@ function App() {
           <AnswerCard
             answer={answerState.answer}
             loading={answerState.loading}
+            score={answerState.score}
+            feedback={answerState.feedback}
+            mode={answerState.mode}
           />
         </div>
 
         {/* Footer */}
         <footer className="mt-12 text-center text-slate-500 text-sm">
-          Built with FastAPI, React, and Groq · Powered by Llama 3.3
+          Built with FastAPI, React, LangChain &amp; Groq · Powered by Llama 3.3
         </footer>
       </div>
     </div>

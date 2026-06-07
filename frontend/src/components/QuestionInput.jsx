@@ -4,22 +4,31 @@ import axios from "axios"
 function QuestionInput({ onAnswer, disabled }) {
   const [question, setQuestion] = useState("")
   const [loading, setLoading] = useState(false)
+  const [mode, setMode] = useState("quick") // "quick" or "agent"
 
   const handleAsk = async () => {
     if (!question.trim()) return
 
     setLoading(true)
-    onAnswer({ answer: "", loading: true })
+    onAnswer({ answer: "", loading: true, score: null, feedback: null, mode })
+
+    const endpoint = mode === "agent" ? "/crew/answer" : "/interview/ask"
 
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/interview/ask`,
+        `${import.meta.env.VITE_API_URL}${endpoint}`,
         { question },
         { headers: { "Content-Type": "application/json" } }
       )
-      onAnswer({ answer: res.data.answer, loading: false })
+      onAnswer({
+        answer: res.data.answer,
+        score: res.data.score || null,
+        feedback: res.data.feedback || null,
+        loading: false,
+        mode,
+      })
     } catch (err) {
-      onAnswer({ answer: `Error: ${err.message}`, loading: false })
+      onAnswer({ answer: `Error: ${err.message}`, loading: false, mode })
     } finally {
       setLoading(false)
     }
@@ -43,6 +52,36 @@ function QuestionInput({ onAnswer, disabled }) {
         </span>
         <h2 className="text-xl font-semibold text-slate-800">Ask a Question</h2>
       </div>
+
+      {/* Mode toggle */}
+      <div className="mb-4 flex gap-2">
+        <button
+          onClick={() => setMode("quick")}
+          className={`px-4 py-2 text-sm rounded-lg font-medium transition ${
+            mode === "quick"
+              ? "bg-indigo-600 text-white"
+              : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+          }`}
+        >
+          ⚡ Quick Answer
+        </button>
+        <button
+          onClick={() => setMode("agent")}
+          className={`px-4 py-2 text-sm rounded-lg font-medium transition ${
+            mode === "agent"
+              ? "bg-indigo-600 text-white"
+              : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+          }`}
+        >
+          🤖 Multi-Agent (with scoring)
+        </button>
+      </div>
+
+      <p className="text-xs text-slate-500 mb-3">
+        {mode === "quick"
+          ? "Fast single-LLM answer using RAG retrieval."
+          : "Three agents collaborate: Researcher → Writer → Critic. Slower but scored."}
+      </p>
 
       <div className="flex flex-col sm:flex-row gap-3">
         <input
