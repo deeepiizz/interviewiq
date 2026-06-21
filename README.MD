@@ -4,6 +4,19 @@ An AI-powered interview preparation assistant that generates resume-aware answer
 
 🚀 **Live Demo:** https://interviewiq-seven.vercel.app
 ![InterviewIQ Demo](demo.png)
+
+![Multi-Agent Demo](multiagent-demo.png)
+
+## Multi-Agent Pipeline
+
+Three specialized agents collaborate to produce and evaluate answers:
+- 🔍 **Researcher** — retrieves relevant chunks from your resume via FAISS
+- ✍️ **Writer** — generates a structured, grounded interview answer
+- 🧠 **Critic** — scores the answer (1–10) and provides improvement feedback
+
+---
+
+
 ---
 
 ## What It Does
