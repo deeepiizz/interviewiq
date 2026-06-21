@@ -3,7 +3,7 @@
 An AI-powered interview preparation assistant that generates resume-aware answers to interview questions using Retrieval-Augmented Generation (RAG) and multi-agent scoring.
 
 🚀 **Live Demo:** https://interviewiq-seven.vercel.app
-
+![InterviewIQ Demo](demo.png)
 ---
 
 ## What It Does
